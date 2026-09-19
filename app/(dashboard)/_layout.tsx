@@ -2,11 +2,13 @@ import { Tabs } from "expo-router"
 import { useColorScheme } from 'react-native'
 import { Colors } from '../../constants/Colors'
 import { Ionicons } from '@expo/vector-icons'
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const DashboardLayout = () => {
 
     const colorScheme = useColorScheme();
     const theme = Colors[colorScheme === 'dark' ? 'dark' : 'light'] ?? Colors.light
+    const insets = useSafeAreaInsets();
 
   return (
     <Tabs 
@@ -15,7 +17,8 @@ const DashboardLayout = () => {
         tabBarStyle: {
           backgroundColor: theme.navBackground,
           paddingTop: 10,
-          height: 90,
+          paddingBottom: insets.bottom > 0 ? insets.bottom : 10,
+          height: 70 + insets.bottom,
         },
         tabBarActiveTintColor: theme.iconColorFocused,
         tabBarInactiveTintColor: theme.iconColor, 
