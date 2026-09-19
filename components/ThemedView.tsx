@@ -21,7 +21,6 @@ const ThemedView = ({ style, safe = false, ...props }: ThemedViewProps) => {
 
   // Using insets because <SafeAreaView> doesn't work well with expo-router's <Stack> component
   const insets = useSafeAreaInsets()
-  console.log("safe view: ", insets)
 
   return (
     <View 
