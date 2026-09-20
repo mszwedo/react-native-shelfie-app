@@ -8,7 +8,7 @@ import ThemedButton from '../../components/ThemedButton'
 
 const Profile = () => {
 
-  const { logout } = useUser()
+  const { logout, user } = useUser()
 
   const handleLogout = async () => {
     try {
@@ -22,7 +22,7 @@ const Profile = () => {
     <ThemedView style={styles.container} safe>
 
       <ThemedText title={true} style={styles.heading}>
-        Your Email
+        {user.email}
       </ThemedText>
       <Spacer />
 
