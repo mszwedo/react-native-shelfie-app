@@ -67,6 +67,7 @@ const Login = () => {
             Register instead
           </ThemedText>
         </Link>
+
       </ThemedView>
     </TouchableWithoutFeedback>
   )
