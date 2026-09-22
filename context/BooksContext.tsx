@@ -1,6 +1,6 @@
 import { createContext, useState, useEffect } from 'react'
 import { useUser } from '../hooks/useUser'
-import { databases, client } from '../lib/appwrite'
+import { databases, client, tablesDB } from '../lib/appwrite'
 import { ID, Permission, Query, Role } from 'react-native-appwrite'
 
 const DATABASE_ID = process.env.EXPO_PUBLIC_APPWRITE_DATABASE_ID
@@ -61,7 +61,11 @@ export function BooksProvider({ children }) {
 
   async function deleteBook(id: string) {
     try {
-
+      await tablesDB.deleteRow(
+        DATABASE_ID,
+        BOOKS_TABLE_ID,
+        id
+      )
     } catch (error) {
       console.error(error.message)
     }
@@ -76,8 +80,12 @@ export function BooksProvider({ children }) {
 
       unsubscribe = client.subscribe(channel, (response) => {
         const { payload, events } = response
-        if (events[0].includes('create')) {
+
+        if (events[0].includes("create")) {
           setBooks((prevBooks) => [...prevBooks, payload])
+        }
+        if (events[0].includes("delete")) {
+          setBooks((prevBooks) => prevBooks.filter((book) => book.$id !== payload.$id))
         }
       })
     } else {
