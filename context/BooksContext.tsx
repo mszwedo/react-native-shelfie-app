@@ -1,6 +1,6 @@
 import { createContext, useState, useEffect } from 'react'
 import { useUser } from '../hooks/useUser'
-import { databases } from '../lib/appwrite'
+import { databases, client } from '../lib/appwrite'
 import { ID, Permission, Query, Role } from 'react-native-appwrite'
 
 const DATABASE_ID = process.env.EXPO_PUBLIC_APPWRITE_DATABASE_ID
@@ -23,7 +23,6 @@ export function BooksProvider({ children }) {
         ]
       )
       setBooks(response.documents)
-      console.log(response.documents)
     } catch (error) {
       console.error(error.message)
     }
@@ -64,10 +63,24 @@ export function BooksProvider({ children }) {
   }
 
   useEffect(() => {
+    let unsubscribe
+    const channel = `databases.${DATABASE_ID}.collections.${BOOKS_TABLE_ID}.documents`
+
     if (user) {
       fetchBooks()
+
+      unsubscribe = client.subscribe(channel, (response) => {
+        const { payload, events } = response
+        if (events[0].includes('create')) {
+          setBooks((prevBooks) => [...prevBooks, payload])
+        }
+      })
     } else {
       setBooks([])
+    }
+
+    return () => {
+      if (unsubscribe) unsubscribe()
     }
   }, [user])
 
